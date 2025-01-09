@@ -9,8 +9,25 @@ class MACP_Unused_CSS_Processor {
     }
 
     public function process($css_content, $html) {
+        // Store media queries separately
+        $mediaQueries = [];
+        preg_match_all('/@media[^{]+\{([^{}]|{[^{}]*})*\}/i', $css_content, $matches);
+        
+        if (!empty($matches[0])) {
+            $mediaQueries = $matches[0];
+            // Temporarily remove media queries from CSS
+            $css_content = preg_replace('/@media[^{]+\{([^{}]|{[^{}]*})*\}/i', '', $css_content);
+        }
+
         $used_selectors = $this->css_extractor->extract_used_selectors($html);
-        return $this->filter_css($css_content, $used_selectors);
+        $filtered_css = $this->filter_css($css_content, $used_selectors);
+
+        // Add back all media queries
+        if (!empty($mediaQueries)) {
+            $filtered_css .= "\n" . implode("\n", $mediaQueries);
+        }
+        
+        return $filtered_css;
     }
 
     private function filter_css($css, $used_selectors) {
@@ -49,8 +66,11 @@ class MACP_Unused_CSS_Processor {
     }
 
     private function is_safelisted($selector) {
-        // Always keep essential selectors
-        if (in_array($selector, ['html', 'body', '*']) || strpos($selector, '@') === 0) {
+        // Always keep essential selectors and media queries
+        if (in_array($selector, ['html', 'body', '*']) || 
+            strpos($selector, '@media') === 0 || 
+            strpos($selector, '@keyframes') === 0 ||
+            strpos($selector, '@supports') === 0) {
             return true;
         }
 
