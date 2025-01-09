@@ -1,25 +1,40 @@
 <?php
 class MACP_CSS_Config {
     public static function get_safelist() {
-        $saved_safelist = get_option('macp_css_safelist', []);
-        
-        // Default WordPress classes that should never be removed
-        $default_safelist = [
-            'wp-*',
-            'admin-bar*',
-            'dashicons*',
-            'menu-item*',
-            'current-menu-item',
-            'page-numbers',
-            'post-*',
-            'sticky',
-            'bypostauthor',
-            'wp-caption*',
-            'gallery*'
-        ];
+    $saved_safelist = get_option('macp_css_safelist', []);
+    
+    $default_safelist = [
+        'wp-*',
+        'admin-bar*',
+        'dashicons*',
+        'menu-item*',
+        'current-menu-item',
+        'page-numbers',
+        'post-*',
+        'sticky',
+        'bypostauthor',
+        'wp-caption*',
+        'gallery*',
+        // Responsive classes
+        'mobile-*',
+        'tablet-*',
+        'desktop-*',
+        'sm-*',
+        'md-*',
+        'lg-*',
+        'xl-*',
+        'hidden-*',
+        'visible-*',
+        'col-*',
+        'row-*',
+        'grid-*',
+        // Media queries
+        '@media*'
+    ];
 
-        return array_merge($default_safelist, $saved_safelist);
-    }
+    return array_merge($default_safelist, $saved_safelist);
+}
+
 
     public static function get_excluded_patterns() {
         $saved_patterns = get_option('macp_css_excluded_patterns', []);
